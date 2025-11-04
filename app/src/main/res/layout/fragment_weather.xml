@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="10dp"
+    android:clipToOutline="true"
+    android:orientation="vertical"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:context=".fragment.WeatherFragment">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="5dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/layout_fewhour"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/weather_date_button_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fewhour_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="数時間ごと"
+            android:textColor="#353232"
+            android:textSize="10sp"
+            app:backgroundTint="#C8C5C5"
+            app:cornerRadius="0dp"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#383636"
+            app:rippleColor="#B4B3B3" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/todaytomorrow_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="今日と明日"
+            android:textColor="#353232"
+            android:textSize="10sp"
+            app:backgroundTint="#C8C5C5"
+            app:cornerRadius="0dp"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#383636"
+            app:rippleColor="#B4B3B3" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/fewday_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="数日間ごと"
+            android:textColor="#353232"
+            android:textSize="10sp"
+            app:backgroundTint="#C8C5C5"
+            app:cornerRadius="0dp"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#383636"
+            app:rippleColor="#B4B3B3" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+</LinearLayout>
+
