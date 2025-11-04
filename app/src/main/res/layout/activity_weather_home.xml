@@ -5,11 +5,87 @@
     android:id="@+id/home_activity_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:elevation="20dp"
     tools:context=".activity.WeatherHomeActivity">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/weather_location_tabLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:background="#3017B3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tabIndicatorColor="#FFFFFF"
+        app:tabMode="scrollable"
+        app:tabSelectedTextColor="#FFFFFF"
+        app:tabTextColor="#FFFFFF">
+
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/now_location_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="現在位置 \n " />
+
+    </com.google.android.material.tabs.TabLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/home_bottom_button_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="メニュー"
+            android:textColor="#353232"
+            android:textSize="12sp"
+            app:backgroundTint="#FFFFFF"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/menu_icon"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#383636"
+            app:rippleColor="#B4B3B3"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="266dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_button2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="検索"
+            android:textColor="#353232"
+            android:textSize="12sp"
+            app:backgroundTint="#FFFFFF"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/search_icon"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#353232"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="266dp" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
