@@ -8,18 +8,29 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import snowsan0113.weather_app.android.R;
+import snowsan0113.weather_app.android.activity.WeatherHomeActivity;
+import snowsan0113.weather_app.android.api.OpenWeatherAPI;
 import snowsan0113.weather_app.android.layout.WeatherLayout;
 import snowsan0113.weather_app.android.layout.FewHourAdapter;
+import snowsan0113.weather_app.android.util.WeatherType;
 
 public class WeatherFragment extends Fragment {
+
+    private final Map<String, List<WeatherLayout>> fewHourMap = new HashMap<>();
+    private View root_view;
 
     public WeatherFragment() {
         // Required empty public constructor
@@ -42,12 +53,63 @@ public class WeatherFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        List<WeatherLayout> fewHourList = new ArrayList<>();
-        for (int n = 0; n < 24; n++) {
-            fewHourList.add(new WeatherLayout(String.valueOf(n), R.drawable.mark_tenki_hare, 30.0f, 20.0f));
+        setupFewHourLayout(0);
+        this.root_view = view;
+    }
+
+    public void setupFewHourLayout(int get_hour) {
+        if (get_hour <= 0) {
+            get_hour = 3; //デフォルトの3時間用
+            Log.w(getClass().getSimpleName(), "Arguments less than 0 hours cannot be used. 3 hour will be used.");
         }
-        RecyclerView weatherView = view.findViewById(R.id.weather_recyclerView);
-        weatherView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        weatherView.setAdapter(new FewHourAdapter(fewHourList));
+
+        List<WeatherLayout> fewHourList = new ArrayList<>();
+        for (int n = 0; n < 24; n+=get_hour) {
+            WeatherLayout weatherLayout = new WeatherLayout(
+                    LocalDateTime.now(),
+                    WeatherType.UNKNOWN,
+                    0.0f,
+                    0.0f
+            );
+            fewHourList.add(weatherLayout);
+        }
+
+        int finalGet_hour = get_hour;
+        new Thread(() -> {
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault());
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), 35.652799, 139.745367);
+
+            int i = 0;
+            for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
+                List<OpenWeatherAPI.WeatherList.Weather> weather = weatherList.getWeather();
+                OpenWeatherAPI.WeatherList.Weather first_weather = weather.get(0);
+                OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
+                LocalDateTime api_weather_time = weatherList.getLocalDateTime();
+                int diff_hour = Math.abs(api_weather_time.getHour() - localDateTime.getHour());
+                int sub_hour = Math.min(diff_hour, 24 - diff_hour);
+
+                if (sub_hour <= 1) {
+                    if (i >= 24 / finalGet_hour) {
+                        break;
+                    }
+
+                    WeatherLayout weatherLayout = fewHourList.get(i);
+                    weatherLayout.setTime(api_weather_time);
+                    weatherLayout.setWeatherIconID(WeatherType.getConvertType(first_weather.getDescription()).getIconID());
+                    weatherLayout.setTempMax((float) main.getTempMax(false));
+                    weatherLayout.setTempMin((float) main.getTempMin(false));
+                    i++;
+                    localDateTime = localDateTime.plusHours(finalGet_hour);
+                }
+            }
+
+
+            getActivity().runOnUiThread(() -> {
+                RecyclerView weatherView = root_view.findViewById(R.id.weather_recyclerView);
+                weatherView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                weatherView.setAdapter(new FewHourAdapter(fewHourList));
+            });
+
+        }).start();
     }
 }

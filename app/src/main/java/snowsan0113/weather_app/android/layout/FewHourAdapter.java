@@ -32,7 +32,7 @@ public class FewHourAdapter extends RecyclerView.Adapter<FewHourAdapter.FewHourH
     @Override
     public void onBindViewHolder(@NonNull FewHourHolder holder, int position) {
         WeatherLayout weatherLayout = fewhourList.get(position);
-        holder.timeText.setText(weatherLayout.getTime());
+        holder.timeText.setText(String.valueOf(weatherLayout.getTime().getHour()));
         holder.weatherIcon.setImageResource(weatherLayout.getWeatherIconID());
         holder.tempMaxText.setText(weatherLayout.getTempMax() + "℃");
         holder.tempMinText.setText(weatherLayout.getTempMin() + "℃");
