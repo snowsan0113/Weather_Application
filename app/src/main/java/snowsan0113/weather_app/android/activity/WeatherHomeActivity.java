@@ -40,7 +40,7 @@ import snowsan0113.weather_app.android.manager.file.JsonConfigManager;
 import snowsan0113.weather_app.android.manager.file.JsonManager;
 
 @SuppressLint("MissingPermission")
-public class WeatherHomeActivity extends AppCompatActivity {
+public class WeatherHomeActivity extends AppCompatActivity implements AppActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -11,7 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import snowsan0113.weather_app.android.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AppActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,10 +24,10 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        initApp();
+        initActivity();
     }
 
-    private void initApp() {
+    public void initActivity() {
         Intent home_intent = new Intent(this, WeatherHomeActivity.class);
         home_intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(home_intent);
