@@ -24,6 +24,7 @@ import snowsan0113.weather_app.android.util.NetworkUtility;
 public class OpenWeatherAPI {
 
     private static final double KELVIN = 273.15;
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     @SerializedName("list")
     List<WeatherList> weatherList;
@@ -68,7 +69,7 @@ public class OpenWeatherAPI {
                 return dt_txt;
             }
             else {
-                SimpleDateFormat raw_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat raw_format = new SimpleDateFormat(DATE_FORMAT);
                 SimpleDateFormat convert_format = new SimpleDateFormat("MM/dd");
                 try {
                     return convert_format.format(raw_format.parse(dt_txt));
@@ -80,7 +81,7 @@ public class OpenWeatherAPI {
 
         @SuppressLint("SimpleDateFormat")
         public LocalDateTime getLocalDateTime() {
-            SimpleDateFormat raw_format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat raw_format = new SimpleDateFormat(DATE_FORMAT);
             try {
                 Date date = raw_format.parse(dt_txt);
                 return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());

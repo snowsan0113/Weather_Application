@@ -2,13 +2,15 @@ package snowsan0113.weather_app.android.manager.file;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Map;
+
 public class JsonConfigManager implements JsonManager.AppDeserializedFile {
 
-    private WeatherLocation weather_location;
+    private Map<String, WeatherLocation> weather_location;
 
     public JsonConfigManager() {}
 
-    public WeatherLocation getWeatherLocation() {
+    public Map<String, WeatherLocation> getWeatherLocationMap() {
         return weather_location;
     }
 
