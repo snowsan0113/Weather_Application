@@ -38,6 +38,7 @@ import java.util.TimerTask;
 
 import snowsan0113.weather_app.android.R;
 import snowsan0113.weather_app.android.listener.weather_home.WeatherHomeClickListener;
+import snowsan0113.weather_app.android.listener.weather_home.WeatherHomeTabSelectListener;
 import snowsan0113.weather_app.android.manager.file.JsonConfigManager;
 import snowsan0113.weather_app.android.manager.file.JsonManager;
 
@@ -89,6 +90,9 @@ public class WeatherHomeActivity extends AppCompatActivity implements AppActivit
         menu_button.setOnClickListener(click_listener);
         MaterialButton search_button = findViewById(R.id.search_button);
         search_button.setOnClickListener(click_listener);
+        WeatherHomeTabSelectListener select_listener = new WeatherHomeTabSelectListener(this);
+        TabLayout tabLayout = findViewById(R.id.weather_location_tabLayout);
+        tabLayout.addOnTabSelectedListener(select_listener);
     }
 
     public void setTabLayout() {
