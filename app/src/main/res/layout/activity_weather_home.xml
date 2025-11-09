@@ -99,7 +99,7 @@
             tools:layout_editor_absoluteY="266dp" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/menu_button2"
+            android:id="@+id/search_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

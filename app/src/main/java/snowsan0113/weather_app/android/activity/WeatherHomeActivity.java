@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 
 import java.io.IOException;
@@ -36,11 +37,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import snowsan0113.weather_app.android.R;
+import snowsan0113.weather_app.android.listener.weather_home.WeatherHomeClickListener;
 import snowsan0113.weather_app.android.manager.file.JsonConfigManager;
 import snowsan0113.weather_app.android.manager.file.JsonManager;
 
 @SuppressLint("MissingPermission")
 public class WeatherHomeActivity extends AppCompatActivity implements AppActivity {
+
+    private static boolean first_flag = false;
+    private static boolean isActive = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +60,35 @@ public class WeatherHomeActivity extends AppCompatActivity implements AppActivit
         initActivity();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isActive = true;
+        if (!first_flag) {
+            first_flag = true;
+            return;
+        }
+
+        setTabLayout();
+        setNowLocationTab();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        isActive = false;
+    }
+
     public void initActivity() {
         setTabLayout();
+        setNowLocationTab();
+
+        //listener
+        WeatherHomeClickListener click_listener = new WeatherHomeClickListener(this);
+        MaterialButton menu_button = findViewById(R.id.menu_button);
+        menu_button.setOnClickListener(click_listener);
+        MaterialButton search_button = findViewById(R.id.search_button);
+        search_button.setOnClickListener(click_listener);
     }
 
     public void setTabLayout() {
@@ -65,6 +97,10 @@ public class WeatherHomeActivity extends AppCompatActivity implements AppActivit
 
         //タブの初期化
         TabLayout tabLayout = findViewById(R.id.weather_location_tabLayout);
+        for (int n = tabLayout.getTabCount() - 1; n >= 1; n--) {
+            tabLayout.removeTabAt(n);
+        }
+
         if (!weatherLocation_map.isEmpty()) {
             for (String key : weatherLocation_map.keySet()) {
                 TabLayout.Tab newTab = tabLayout.newTab();
@@ -72,7 +108,6 @@ public class WeatherHomeActivity extends AppCompatActivity implements AppActivit
                 tabLayout.addTab(newTab);
             }
         }
-        setNowLocationTab();
     }
 
     private void setNowLocationTab() {
@@ -105,19 +140,13 @@ public class WeatherHomeActivity extends AppCompatActivity implements AppActivit
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+                if (!isActive) {
+                    this.cancel();
+                    return;
+                }
+
                 WeatherHomeActivity.this.runOnUiThread(() -> {
                     if (address[0] == null) {
-                        AlertDialog builder = new AlertDialog.Builder(WeatherHomeActivity.this)
-                                .setMessage("位置情報を取得できませんでした")
-                                .setPositiveButton("再取得", (dialogInterface, i) -> {
-                                    setNowLocationTab();
-                                    this.cancel();
-                                })
-                                .setNegativeButton("閉じる", (dialogInterface, i) -> {
-                                    dialogInterface.cancel();
-                                    this.cancel();
-                                }).create();
-                        builder.show();
                         now_location_tab.setText("失敗");
                     }
                     else {
