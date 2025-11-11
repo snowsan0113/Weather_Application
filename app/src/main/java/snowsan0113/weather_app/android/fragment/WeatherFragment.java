@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -27,9 +29,10 @@ import snowsan0113.weather_app.android.activity.WeatherHomeActivity;
 import snowsan0113.weather_app.android.api.OpenWeatherAPI;
 import snowsan0113.weather_app.android.layout.WeatherLayout;
 import snowsan0113.weather_app.android.layout.FewHourAdapter;
+import snowsan0113.weather_app.android.listener.weather_fragment.WeatherFragmentButtonListener;
 import snowsan0113.weather_app.android.util.WeatherType;
 
-public class WeatherFragment extends Fragment {
+public class WeatherFragment extends Fragment implements AppFragment {
 
     private final Map<String, List<WeatherLayout>> fewHourMap = new HashMap<>();
     private View root_view;
@@ -55,8 +58,17 @@ public class WeatherFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        setupFewHourLayout(0, 35.652799F, 139.745367F);
         this.root_view = view;
+        initFragment();
+    }
+    
+    @Override
+    public void initFragment() {
+        setupFewHourLayout(0, 35.652799F, 139.745367F);
+        
+        //listener
+        MaterialButtonToggleGroup buttonGroup = root_view.findViewById(R.id.weather_date_button_group);
+        buttonGroup.addOnButtonCheckedListener(new WeatherFragmentButtonListener(this));
     }
 
     /**
