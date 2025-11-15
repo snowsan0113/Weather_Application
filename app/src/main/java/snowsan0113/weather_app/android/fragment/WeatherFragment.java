@@ -1,6 +1,7 @@
 package snowsan0113.weather_app.android.fragment;
 
 import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import java.util.Map;
 import snowsan0113.weather_app.android.R;
 import snowsan0113.weather_app.android.activity.WeatherHomeActivity;
 import snowsan0113.weather_app.android.api.OpenWeatherAPI;
+import snowsan0113.weather_app.android.layout.FewDayAdapter;
 import snowsan0113.weather_app.android.layout.WeatherLayout;
 import snowsan0113.weather_app.android.layout.FewHourAdapter;
 import snowsan0113.weather_app.android.listener.weather_fragment.WeatherFragmentButtonListener;
@@ -35,6 +38,8 @@ import snowsan0113.weather_app.android.util.WeatherType;
 public class WeatherFragment extends Fragment implements AppFragment {
 
     private final Map<String, List<WeatherLayout>> fewHourMap = new HashMap<>();
+    private final Map<String, List<WeatherLayout>> todayTomorrowMap = new HashMap<>();
+    private final Map<String, List<WeatherLayout>> fewDayMap = new HashMap<>();
     private View root_view;
 
     public WeatherFragment() {
@@ -126,8 +131,75 @@ public class WeatherFragment extends Fragment implements AppFragment {
 
             getActivity().runOnUiThread(() -> {
                 RecyclerView weatherView = root_view.findViewById(R.id.weather_recyclerView);
+                weatherView.removeAllViews();
                 weatherView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
                 weatherView.setAdapter(new FewHourAdapter(fewHourList));
+
+                try {
+                    List<Address> address = new Geocoder(getActivity()).getFromLocation(lat, lon, 5);
+                    fewHourMap.put(address.get(0).getAdminArea(), fewHourList);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+        }).start();
+    }
+
+    public void setupFewDayLayout(int get_day, float lat, float lon) {
+        List<WeatherLayout> fewDayList = new ArrayList<>();
+        for (int n = 0; n < 5; n+=get_day) {
+            WeatherLayout weatherLayout = new WeatherLayout(
+                    LocalDateTime.now(),
+                    WeatherType.UNKNOWN,
+                    0.0f,
+                    0.0f
+            );
+            fewDayList.add(weatherLayout);
+        }
+
+        int finalGet_day = get_day;
+        new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), lat, lon); //APIから取得
+
+            int i = 0;
+            for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
+                if (i == 5) {
+                    break;
+                }
+
+                List<OpenWeatherAPI.WeatherList.Weather> weather = weatherList.getWeather();
+                OpenWeatherAPI.WeatherList.Weather first_weather = weather.get(0);
+                OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
+                LocalDateTime api_weather_time = weatherList.getLocalDateTime();
+
+                WeatherLayout weatherLayout = fewDayList.get(i);
+
+                if (api_weather_time.getDayOfMonth() == localDateTime.getDayOfMonth()) {
+                    weatherLayout.setTime(api_weather_time);
+                    weatherLayout.setWeatherIconID(WeatherType.getConvertType(first_weather.getDescription()).getIconID());
+                    weatherLayout.setTempMax((float) main.getTempMax(false));
+                    weatherLayout.setTempMin((float) main.getTempMin(false));
+                    localDateTime = localDateTime.plusDays(finalGet_day);
+                    i++;
+                }
+
+            }
+
+
+            getActivity().runOnUiThread(() -> {
+                RecyclerView weatherView = root_view.findViewById(R.id.weather_recyclerView);
+                weatherView.removeAllViews();
+                weatherView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                weatherView.setAdapter(new FewDayAdapter(fewDayList));
+
+                try {
+                    List<Address> address = new Geocoder(getActivity()).getFromLocation(lat, lon, 5);
+                    fewDayMap.put(address.get(0).getAdminArea(), fewDayList);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             });
 
         }).start();
