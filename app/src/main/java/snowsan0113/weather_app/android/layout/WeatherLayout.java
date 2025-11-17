@@ -1,5 +1,7 @@
 package snowsan0113.weather_app.android.layout;
 
+import org.jetbrains.annotations.Nullable;
+
 import java.time.LocalDateTime;
 
 import snowsan0113.weather_app.android.util.WeatherType;
@@ -7,6 +9,7 @@ import snowsan0113.weather_app.android.util.WeatherType;
 public class WeatherLayout {
     private LocalDateTime time;
     private int weatherIcon;
+    private String weather;
     private float tempMax;
     private float tempMin;
 
@@ -15,8 +18,13 @@ public class WeatherLayout {
     }
 
     public WeatherLayout(LocalDateTime time, int weatherIcon, float tempMax, float tempMin) {
+        this(time, weatherIcon, "", tempMax, tempMin);
+    }
+
+    public WeatherLayout(LocalDateTime time, int weatherIcon, String weather, float tempMax, float tempMin) {
         this.time = time;
         this.weatherIcon = weatherIcon;
+        this.weather = weather;
         this.tempMax = tempMax;
         this.tempMin = tempMin;
     }
@@ -51,5 +59,14 @@ public class WeatherLayout {
 
     public void setTempMin(float min) {
         this.tempMin = min;
+    }
+
+    @Nullable
+    public String getWeather() {
+        return weather;
+    }
+
+    public void setWeather(String weather) {
+        this.weather = weather;
     }
 }

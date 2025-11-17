@@ -54,7 +54,7 @@ public class WeatherFragmentButtonListener implements MaterialButtonToggleGroup.
                 weatherFragment.setupFewHourLayout(3, weatherLocation.getLatitude(), weatherLocation.getLongitude());
             }
             else if (checkedId == R.id.todaytomorrow_button) {
-
+                weatherFragment.setupTodayTomorrowLayout(1, weatherLocation.getLatitude(), weatherLocation.getLongitude());
             }
             else if (checkedId == R.id.fewday_button) {
                 weatherFragment.setupFewDayLayout(1, weatherLocation.getLatitude(), weatherLocation.getLongitude());
